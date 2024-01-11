@@ -1,0 +1,30 @@
+{
+  "name": "kdprod",
+  "version": "1.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ErrorDoc404/kdprod.git"
+  },
+  "keywords": [
+    "discord",
+    "canvas",
+    "welcome",
+    "rank"
+  ],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ErrorDoc404/kdprod/issues"
+  },
+  "homepage": "https://github.com/ErrorDoc404/kdprod#readme",
+  "dependencies": {
+    "canvas": "^2.11.2",
+    "sharp": "^0.33.1",
+    "webp-converter": "^2.3.3"
+  }
+}
