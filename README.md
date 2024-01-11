@@ -10,6 +10,9 @@
     <summary>  Welcome Card  </summary>
 
 ```javascript
+const { Client } = require("discord.js");
+const { DiscordProfile } = require('kdprod');
+const canvas = new DiscordProfile();
 
 const client = new Client({
 	intents: [
@@ -41,6 +44,9 @@ client.login('Your-Bot-Token');
     <summary>  Rank Card  </summary>
 
 ```javascript
+const { Client } = require("discord.js");
+const { DiscordProfile } = require('kdprod');
+const canvas = new DiscordProfile();
 
 const client = new Client({
 	intents: [

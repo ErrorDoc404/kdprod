@@ -3,7 +3,7 @@ const sharp = require("sharp");
 const https = require('https');
 const path = require('path');
 
-class DiscordCanvas {
+class DiscordProfile {
     constructor() {
         this.canvas = createCanvas(700, 250);
         this.ctx = this.canvas.getContext("2d");
@@ -237,4 +237,4 @@ function change(xp) {
     return new Intl.NumberFormat().format(xp);
 }
 
-module.exports = DiscordCanvas;
+module.exports = DiscordProfile;

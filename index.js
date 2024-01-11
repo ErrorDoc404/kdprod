@@ -15,5 +15,5 @@ Canvas.registerFont(__dirname + '/assets/fonts/bold.ttf', {
 });
 
 module.exports = {
-    DiscordCanvas: require('./src/canvas.js'),
+    DiscordProfile: require('./src/canvas.js'),
 };
