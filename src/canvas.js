@@ -73,7 +73,7 @@ class DiscordCanvas {
 
         const avatar = await loadImage(convertImg);
 
-        this.drawCircularImage(this.ctx, avatar, 72, 48, 150);
+        this.drawCircularImage(this.ctx, avatar, 67, 42, 160);
 
         return this.canvas.toBuffer();
     }
@@ -207,7 +207,7 @@ class DiscordCanvas {
                     try {
                         const buffer = Buffer.concat(chunks);
                         const resizedBuffer = await sharp(buffer)
-                            .resize(150, 150)
+                            .resize(250, 250)
                             .jpeg()
                             .toBuffer();
                         resolve(resizedBuffer);
