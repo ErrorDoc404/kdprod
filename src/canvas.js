@@ -1,6 +1,7 @@
-const { createCanvas, loadImage } = require("canvas");
+const { createCanvas, loadImage, registerFont } = require("canvas");
 const sharp = require("sharp");
 const https = require('https');
+const path = require('path');
 
 class DiscordCanvas {
     constructor() {
@@ -28,7 +29,7 @@ class DiscordCanvas {
             }
         }
 
-        const font = 'Manrope';
+        const font = 'Sans';
 
         if (blur) {
             const img = await loadImage(link);
@@ -47,9 +48,7 @@ class DiscordCanvas {
         this.ctx.strokeRect(0, 0, this.canvas.width, this.canvas.height);
 
         if (block !== false) {
-            let blurImage = await loadImage(
-                "https://cdn.discordapp.com/attachments/989864191571664936/989864219224727564/welcome.png"
-            );
+            let blurImage = await loadImage(`${__dirname}/../assets/images/welcome.png`);
 
             this.ctx.drawImage(blurImage, 0, 0, this.canvas.width, this.canvas.height);
         }
@@ -72,14 +71,123 @@ class DiscordCanvas {
 
         let convertImg = await this.resizeAndConvertToJpeg(member.displayAvatarURL({ size: 1024, dynamic: true, format: 'jpg' }));
 
-        console.log(convertImg);
-
         const avatar = await loadImage(convertImg);
 
         this.drawCircularImage(this.ctx, avatar, 72, 48, 150);
 
         return this.canvas.toBuffer();
     }
+
+    async rankcard({ member, currentXP, fullXP, level, rank, link, gradiant, block, fillStyle } = {}) {
+        let name = member.username;
+        let discriminator = member.discriminator;
+        let avatarURL = member.displayAvatarURL({ size: 1024, dynamic: true, format: 'png' });
+
+        if (!name) throw new Error('Please provide the name of the person');
+        if (!discriminator) throw new Error('Please provide the discriminator of the person as it is the main element in the rank card');
+        if (!currentXP) throw new Error('It is mandatory to have the current XP of the person to show stats');
+        if (!fullXP) throw new Error('It is mandatory to have the Full XP number');
+        if (!level) throw new Error('You did not provide the Level of the person');
+        if (!rank) throw new Error('You did not provide the Rank of the person');
+        if (!avatarURL) throw new Error('Avatar is missing');
+        if (!link) {
+            if (!gradiant) {
+                throw new Error('Please give the link of the background image');
+            }
+        }
+
+        if (gradiant) {
+            if (link) throw new Error('You cannot use link and gradiant at the same time');
+            let color = gradiant.find(x => x.name === gradiant.toLowerCase());
+            if (!color) {
+                throw new Error('Invalid Color name');
+            }
+
+            link = color.link;
+        }
+
+        const background = await loadImage(link);
+        const font = 'Sans';
+        this.ctx.drawImage(background, 0, 0, this.canvas.width, this.canvas.height);
+        this.ctx.strokeRect(0, 0, this.canvas.width, this.canvas.height);
+
+        if (block !== false) {
+            let blurImage = await loadImage(`${__dirname}/../assets/images/rank.png`);
+            this.ctx.drawImage(blurImage, 0, 0, this.canvas.width, this.canvas.height);
+        }
+
+        let convertImg = await this.resizeAndConvertToJpeg(member.displayAvatarURL({ size: 1024, dynamic: true, format: 'jpg' }));
+
+        const avatarImageBuffer = await sharp(Buffer.from(convertImg))
+            .resize(1024, 1024)
+            .composite([{ input: Buffer.from(`<svg><circle cx="512" cy="512" r="512"/></svg>`), blend: 'dest-in' }])
+            .toFormat('png')  // Explicitly specify the format
+            .toBuffer();
+
+        console.log('Avatar image processed.');
+
+        const avatarImage = await loadImage(avatarImageBuffer);
+
+        this.ctx.drawImage(avatarImage, 44, 45, 155, 155);
+        this.ctx.font = `bold 20px ${font}`;
+        this.ctx.fillStyle = '#FFFFFF';
+        this.ctx.textAlign = 'start';
+        this.ctx.strokeStyle = '#f5f5f5';
+
+        const xname = name.length > 18 ? name.substring(0, 18).trim() + '...' : name;
+        this.ctx.fillText(`${name}`, 340, 52);
+
+        this.ctx.font = `bold 20px ${font}`;
+        this.ctx.fillStyle = '#FFFFFF';
+        this.ctx.textAlign = 'start';
+        this.ctx.strokeStyle = '#f5f5f5';
+
+        this.ctx.fillText(`${discriminator}`, 580, 84);
+
+        let x = 240;
+        let y = 142;
+        this.ctx.font = `bold 22px ${font}`;
+        this.ctx.fillStyle = '#FFFFFF';
+        this.ctx.textAlign = 'start';
+        this.ctx.fillText(`/ ${change(fullXP)}`, x + this.ctx.measureText(change(currentXP)).width + 15, y);
+
+        this.ctx.fillText(change(currentXP), x, y);
+
+        let converted = currentXP;
+        if (typeof currentXP === 'string') converted = parseInt(currentXP);
+        let widthXP = (converted * 439) / fullXP;
+        if (widthXP > 439 - 18.5) widthXP = 439 - 18.5;
+        this.ctx.beginPath();
+
+        let hash = null;
+
+        if (fillStyle) {
+            let rankColor = rankBarColor.find(x => x.name === fillStyle);
+            if (!rankColor) {
+                return console.log('Invalid rankBarColor Color :v');
+            }
+
+            hash = rankColor.hash;
+        } else {
+            console.log('fillStyle not found');
+            hash = '#FFFFFF';
+        }
+
+        this.ctx.fillStyle = hash;
+
+        this.ctx.fillRect(239, 119.5 + 36.25, widthXP, 23.5);
+
+        this.ctx.fillStyle = '#FFFFFF';
+
+        const RankN = rank.length > 5 ? rank.substring(0, 5).trim() + '+' : rank;
+        this.ctx.fillText(`${RankN}`, 310, 210);
+
+        const levelN = level.length > 6 ? level.substring(0, 6).trim() + '+' : level;
+        this.ctx.fillText(`${levelN}`, 500, 210);
+
+        return this.canvas.toBuffer();
+    }
+
 
     async resizeAndConvertToJpeg(imgUrl) {
         return new Promise((resolve, reject) => {
@@ -123,6 +231,10 @@ class DiscordCanvas {
         // Draw the image
         ctx.drawImage(image, x, y, diameter, diameter);
     }
+}
+
+function change(xp) {
+    return new Intl.NumberFormat().format(xp);
 }
 
 module.exports = DiscordCanvas;

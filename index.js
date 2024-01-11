@@ -1,4 +1,5 @@
 const Canvas = require("canvas");
+const path = require('path');
 
 Canvas.registerFont(`${__dirname}/assets/fonts/LemonMilk.otf`, { family: "Bold" });
 Canvas.registerFont(`${__dirname}/assets/fonts/JosefinSans-Regular.ttf`, { family: "Normal" });
