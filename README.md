@@ -1,8 +1,20 @@
-# Examples
+# KDPROD
 
 [![NPM Version](https://img.shields.io/npm/v/kdprod?color=00DEC8&style=for-the-badge)](https://www.npmjs.com/package/kdprod)
 [![NPM Downloads](https://img.shields.io/npm/dt/kdprod?color=00DEC8&style=for-the-badge)](https://www.npmjs.com/package/kdprod)
 [![NPM License](https://img.shields.io/npm/l/kdprod?color=00DEC8&style=for-the-badge)](https://www.npmjs.com/package/kdprod)
+
+## Overview
+
+**kdprod** is a powerful and easy-to-use Node.js library that provides functionalities for creating dynamic Discord profile images. It allows you to generate stunning welcome and rank cards for your Discord bot users with minimal effort.
+
+## Installation
+
+Install kdprod using npm:
+
+```bash
+npm i kdprod
+```
 
 ## Examples
 
@@ -85,3 +97,7 @@ client.login('Your-Bot-Token');
 ![Image](examples/rank.jpg)
 
 </details>
+
+## Licence
+
+This project is licensed under the MIT License. Feel free to contribute and use it in your projects!

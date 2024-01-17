@@ -9,7 +9,7 @@ class DiscordProfile {
         this.ctx = this.canvas.getContext("2d");
     }
 
-    async welcome(member, { link, gradiant, blur, block } = {}) {
+    async welcome(member, count, { link, gradiant, blur, block } = {}) {
         blur = blur !== false;
 
         if (link && gradiant) {
@@ -67,7 +67,7 @@ class DiscordProfile {
         this.ctx.font = `bold 20px ${font}`;
         this.ctx.fillStyle = "#FFFFFF";
 
-        this.ctx.fillText(`#${member.discriminator}`, 278, 160);
+        this.ctx.fillText(`count: ${count}`, 278, 160);
 
         let convertImg = await this.resizeAndConvertToJpeg(member.displayAvatarURL({ size: 1024, dynamic: true, format: 'jpg' }));
 
@@ -121,7 +121,7 @@ class DiscordProfile {
         const avatarImageBuffer = await sharp(Buffer.from(convertImg))
             .resize(1024, 1024)
             .composite([{ input: Buffer.from(`<svg><circle cx="512" cy="512" r="512"/></svg>`), blend: 'dest-in' }])
-            .toFormat('png')  // Explicitly specify the format
+            .toFormat('png')
             .toBuffer();
 
         console.log('Avatar image processed.');
