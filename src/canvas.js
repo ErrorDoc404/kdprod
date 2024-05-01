@@ -9,12 +9,95 @@ class DiscordProfile {
         this.ctx = this.canvas.getContext("2d");
     }
 
+    async profile({ name, discriminator, avatar, rank, xp, background, cardLight, cardDark, block } = {}) {
+        if (!name) throw new Error("Profile name is not given.");
+        if (!avatar) avatar = await this.resizeAndConvertToJpeg(name.displayAvatarURL({ size: 1024, dynamic: true, format: 'jpg' }));
+        if (!rank) throw new Error("Rank is not given.");
+        if (!xp) throw new Error("XP is not given.");
+
+        // Check if the background is provided, otherwise use a default background
+        if (!background) {
+            if (gradiant) {
+                let color = gradiant.find(x => x.name === gradiant.toLowerCase());
+                if (!color) {
+                    return console.log(`[ERROR] Gradient color not found!`);
+                }
+
+                background = color.background;
+            } else {
+                background = `https://images4.alphacoders.com/978/978917.jpg`;
+            }
+        }
+
+        // Load the background image
+        const fixedbkg = await loadImage(background);
+        this.ctx.drawImage(fixedbkg, 0, 0, this.canvas.width, this.canvas.height);
+
+        // if (block !== false) {
+        //     let blurImage = await loadImage(`${__dirname}/../assets/images/rank.png`);
+        //     this.ctx.drawImage(blurImage, 0, 0, this.canvas.width, this.canvas.height);
+        // }
+
+        this.ctx.fillStyle = cardLight ? cardLight : "#000000";
+        this.ctx.globalAlpha = 0.2
+        this.ctx.fillRect(43, 0, 170, 300);
+        this.ctx.globalAlpha = 1;
+
+        // Load and draw the avatar image
+        try {
+            const avatarImg = await loadImage(avatar);
+            const resizeAvatar = await sharp(avatarImg).resize(640, 640).toBuffer();
+            this.ctx.drawImage(resizeAvatar, 53, 15, 150, 150);
+        } catch (error) {
+            // If the avatar image type is not supported, convert it to JPEG and then draw
+            console.log("Unsupported image type. Converting to JPEG...");
+            avatar = await this.resizeAndConvertToJpeg(avatar);
+            const avatarImg = await loadImage(avatar);
+            this.ctx.drawImage(avatarImg, 53, 10, 150, 150);
+        }
+
+        this.ctx.fillStyle = cardDark ? cardDark : "black";
+        this.ctx.globalAlpha = 0.2;
+        this.ctx.fillRect(53, 170, 150, 30);
+        this.ctx.fillRect(53, 210, 150, 30);
+        this.ctx.fillRect(670 - (name.length >= 29 ? (29 * 12) : (name.length * 12.5)  ), 13.5, 400, 30);
+        this.ctx.fillRect(620, 50, 200, 25);
+        this.ctx.globalAlpha = 1;
+
+        this.ctx.fillStyle = "white"
+        this.ctx.font = `20px Bold`;
+        this.ctx.textAlign = "center";
+        this.ctx.globalAlpha = 0.8;
+        this.ctx.fillText("RANK : #" + rank, 125, 192)
+        this.ctx.globalAlpha = 1;
+
+        this.ctx.font = `bold 20px Bold`;
+        this.ctx.fillStyle = "#FFFFFF";
+        this.ctx.textAlign = "center";
+        this.ctx.strokeStyle = "#f5f5f5";
+        this.ctx.globalAlpha = 0.8;
+        this.ctx.fillText("XP : " + xp, 126, 232)
+        this.ctx.globalAlpha = 1;
+
+        this.ctx.font = `bold 20px Manrope`;
+        name = name.length > 29 ? name.substring(0, 29).trim() + ".." : name;
+        this.ctx.textAlign = "right"
+        this.ctx.fillText(`${name}`, 680, 35);
+        this.ctx.fillText(`#${discriminator}`, 680, 69.5);
+
+        return this.canvas.toBuffer();
+    }
+
+
+
     async welcome(member, count, { link, gradiant, blur, block } = {}) {
         blur = blur !== false;
 
         if (link && gradiant) {
             return console.log(`[ERROR] You can't use link and gradient at the same time!`);
         }
+
+        console.log(link);
 
         if (!link) {
             if (gradiant) {
