@@ -90,7 +90,7 @@ class DiscordProfile {
 
 
 
-    async welcome(member, count, { link, gradiant, blur, block } = {}) {
+    async welcome(member, { link, gradiant, blur, block } = {}) {
         blur = blur !== false;
 
         if (link && gradiant) {
@@ -150,7 +150,7 @@ class DiscordProfile {
         this.ctx.font = `bold 20px ${font}`;
         this.ctx.fillStyle = "#FFFFFF";
 
-        this.ctx.fillText(`count: ${count}`, 278, 160);
+        this.ctx.fillText(`# ${member.discriminator}`, 278, 160);
 
         let convertImg = await this.resizeAndConvertToJpeg(member.displayAvatarURL({ size: 1024, dynamic: true, format: 'jpg' }));
 
