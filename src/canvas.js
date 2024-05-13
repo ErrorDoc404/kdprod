@@ -90,7 +90,7 @@ class DiscordProfile {
 
 
 
-    async welcome(member, { link, gradiant, blur, block } = {}) {
+    async welcome(member, count, { link, gradiant, blur, block } = {}) {
         blur = blur !== false;
 
         if (link && gradiant) {
@@ -143,14 +143,14 @@ class DiscordProfile {
         this.ctx.textAlign = "start";
         this.ctx.strokeStyle = "#f5f5f5";
 
-        const name = xname.length > 12 ? `${xname.substring(0, 12).trim()}...` : xname;
-        this.ctx.fillText(`${name}`, 278, 113);
-        this.ctx.strokeText(`${name}`, 278, 113);
+        const name = xname.length > 18 ? `${xname.substring(0, 18).trim()}...` : xname;
+        this.ctx.fillText(`${name}`, 278, 110);
+        this.ctx.strokeText(`${name}`, 278, 110);
 
         this.ctx.font = `bold 20px ${font}`;
         this.ctx.fillStyle = "#FFFFFF";
 
-        this.ctx.fillText(`# ${member.discriminator}`, 278, 160);
+        this.ctx.fillText(`Member Count: #${count}`, 278, 165);
 
         let convertImg = await this.resizeAndConvertToJpeg(member.displayAvatarURL({ size: 1024, dynamic: true, format: 'jpg' }));
 
