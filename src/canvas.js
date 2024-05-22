@@ -97,15 +97,12 @@ class DiscordProfile {
             return console.log(`[ERROR] You can't use link and gradient at the same time!`);
         }
 
-        console.log(link);
-
         if (!link) {
             if (gradiant) {
                 let color = gradiant.find(x => x.name === gradiant.toLowerCase());
                 if (!color) {
                     return console.log(`[ERROR] Gradient color not found!`);
                 }
-
                 link = color.link;
             } else {
                 link = `https://images4.alphacoders.com/978/978917.jpg`;
@@ -114,51 +111,49 @@ class DiscordProfile {
 
         const font = 'Sans';
 
+        // Create canvas and context
+        const canvas = createCanvas(700, 250); // Adjust size as needed
+        const ctx = canvas.getContext('2d');
+
         if (blur) {
             const img = await loadImage(link);
-            img.blur(5);
-            link = img.toBuffer();
-
-            const fixedbkg = await loadImage(link);
-
-            this.ctx.drawImage(fixedbkg, 0, 0, this.canvas.width, this.canvas.height);
+            const blurredBuffer = await sharp(link).blur(5).toBuffer();
+            const fixedbkg = await loadImage(blurredBuffer);
+            ctx.drawImage(fixedbkg, 0, 0, canvas.width, canvas.height);
         } else {
             const fixedbkg = await loadImage(link);
-
-            this.ctx.drawImage(fixedbkg, 0, 0, this.canvas.width, this.canvas.height);
+            ctx.drawImage(fixedbkg, 0, 0, canvas.width, canvas.height);
         }
 
-        this.ctx.strokeRect(0, 0, this.canvas.width, this.canvas.height);
+        ctx.strokeRect(0, 0, canvas.width, canvas.height);
 
         if (block !== false) {
             let blurImage = await loadImage(`${__dirname}/../assets/images/welcome.png`);
-
-            this.ctx.drawImage(blurImage, 0, 0, this.canvas.width, this.canvas.height);
+            ctx.drawImage(blurImage, 0, 0, canvas.width, canvas.height);
         }
 
         let xname = member.username;
+        console.log(`Member username: ${xname}`);  // Log the username to verify it's correct
 
-        this.ctx.font = `bold 36px ${font}`;
-        this.ctx.fillStyle = "#FFFFFF";
-        this.ctx.textAlign = "start";
-        this.ctx.strokeStyle = "#f5f5f5";
+        ctx.font = `bold 36px ${font}`;
+        ctx.fillStyle = "#FFFFFF";
+        ctx.textAlign = "start";
+        ctx.strokeStyle = "#f5f5f5";
 
         const name = xname.length > 18 ? `${xname.substring(0, 18).trim()}...` : xname;
-        this.ctx.fillText(`${name}`, 278, 110);
-        this.ctx.strokeText(`${name}`, 278, 110);
+        ctx.fillText(`${name}`, 278, 110);
+        ctx.strokeText(`${name}`, 278, 110);
 
-        this.ctx.font = `bold 20px ${font}`;
-        this.ctx.fillStyle = "#FFFFFF";
-
-        this.ctx.fillText(`Member Count: #${count}`, 278, 165);
+        ctx.font = `bold 20px ${font}`;
+        ctx.fillStyle = "#FFFFFF";
+        ctx.fillText(`Member Count: #${count}`, 278, 165);
 
         let convertImg = await this.resizeAndConvertToJpeg(member.displayAvatarURL({ size: 1024, dynamic: true, format: 'jpg' }));
-
         const avatar = await loadImage(convertImg);
 
-        this.drawCircularImage(this.ctx, avatar, 67, 42, 160);
+        this.drawCircularImage(ctx, avatar, 67, 42, 160);
 
-        return this.canvas.toBuffer();
+        return canvas.toBuffer();
     }
 
     async rankcard({ member, currentXP, fullXP, level, rank, link, gradiant, block, fillStyle } = {}) {
