@@ -16,6 +16,9 @@
     "welcome",
     "rank"
   ],
+  "publishConfig": {
+    "registry": "https://www.npmjs.com/package/kdprod"
+  },
   "author": "",
   "license": "ISC",
   "bugs": {
