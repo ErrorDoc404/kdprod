@@ -17,7 +17,7 @@
     "rank"
   ],
   "publishConfig": {
-    "registry": "https://www.npmjs.com/package/kdprod"
+    "registry": "https://npm.pkg.github.com"
   },
   "author": "",
   "license": "ISC",
